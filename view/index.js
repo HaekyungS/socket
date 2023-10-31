@@ -1,5 +1,7 @@
 import { TagMaker } from "../module/tagMaker.js";
 
+const socket = io();
+
 Object.assign(document.body, { style: "width:100vw; height:100vh;" });
 
 // 컨테이너
