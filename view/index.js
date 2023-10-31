@@ -59,5 +59,3 @@ chatTextSend.addEventListener("submit", (e) => {
 
   textbox.value = "";
 });
-
-console.log(textSend);
