@@ -47,9 +47,26 @@ TagMaker("p", textSend, {
   innerText: "전송",
 });
 
+// 입장한 소켓아이디를 채팅창 상단부에 텍스트로 넣어준다.
+socket.on("come", (data) => {
+  console.log(data);
+  chatTop.innerText = data + "의 room";
+
+  const newTextBox = TagMaker("div", chatTextBox, {
+    style: "width:90%; height:auto; display:flex; margin:7px;background-color:#F8E0E0",
+  });
+  TagMaker("div", newTextBox, {
+    style: "width:100%; height:auto; font-size:13px; text-align:center; ",
+    innerText: data + "님이 들어오셨습니다. 하이하이~",
+  });
+});
+
 // 내가 작성된 메세지 생성 이벤트
 chatTextSend.addEventListener("submit", (e) => {
   e.preventDefault();
+
+  // 내가 입력한 값을 서버로 전달해준다.
+  socket.emit("message", textbox.value);
 
   const newTextBox = TagMaker("div", chatTextBox, {
     style: "width:90%; height:auto; display:flex; flex-direction:row-reverse; margin:5px",
@@ -60,4 +77,26 @@ chatTextSend.addEventListener("submit", (e) => {
   });
 
   textbox.value = "";
+});
+
+// 다른 유저의 메세지
+socket.on("anotherMessage", (data) => {
+  const newTextBox = TagMaker("div", chatTextBox, {
+    style: "width:90%; height:auto; display:flex; margin:7px",
+  });
+  TagMaker("div", newTextBox, {
+    style: "max-width:40%; height:auto; background-color:#F8E0E0; font-size:13px; ",
+    innerText: data,
+  });
+});
+
+// 유저 퇴장 안내
+socket.on("getOut", (data) => {
+  const newTextBox = TagMaker("div", chatTextBox, {
+    style: "width:90%; height:auto; display:flex; margin:5px; background-color:#F8E0E0",
+  });
+  TagMaker("div", newTextBox, {
+    style: "width:100%; height:auto; text-align:center; font-size:13px; ",
+    innerText: data + "님이 퇴장하셨습니다! 바이바이~",
+  });
 });
