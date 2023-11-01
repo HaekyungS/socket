@@ -34,10 +34,20 @@ app.get("/module/tagMaker.js", (req, res) => {
 // 소켓입장 시
 io.on("connection", (socket) => {
   console.log("socket server is on");
-  console.dir(socket);
+
+  // 입장한 소켓의 아이디를 전달한다.
+  io.emit("come", socket.id);
+
+  // 전달받은 메세지를 나 제외한 다른 유저에게 전달한다.
+  socket.on("message", (data) => {
+    console.log("메세지오낭", data);
+
+    socket.broadcast.emit("anotherMessage", data);
+  });
 
   socket.on("disconnect", () => {
     console.log("byebye");
+    io.emit("getOut", socket.id);
   });
 });
 
