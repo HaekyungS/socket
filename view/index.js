@@ -17,7 +17,19 @@ const chatBox = TagMaker("div", container, {
 
 // 메신저 상단부
 const chatTop = TagMaker("div", chatBox, {
-  style: "width:100%; height:10%; border-bottom:0.5px solid lightpink",
+  style:
+    "width:100%; height:10%; display:flex; align-items:center; border-bottom:0.5px solid lightpink;",
+});
+
+// 채팅방 이름
+const chatRoomName = TagMaker("div", chatTop, {
+  style: "width:65%; height:50%; text-align:center; font-size:20px; ",
+});
+
+// 채팅방 이동버튼
+const chatLeave = TagMaker("div", chatTop, {
+  style: "width:30%; height:50%; text-align:center; font-size:16px;background-color:lightpink",
+  innerText: "다른방가기",
 });
 
 // 메신저 본문
@@ -49,21 +61,22 @@ TagMaker("p", textSend, {
 
 // 입장한 소켓아이디를 채팅창 상단부에 텍스트로 넣어준다.
 socket.on("come", (data) => {
-  console.log(data);
-  chatTop.innerText = data + "의 room";
+  chatRoomName.innerText = data.room + "의 room";
 
   const newTextBox = TagMaker("div", chatTextBox, {
     style: "width:90%; height:auto; display:flex; margin:7px;background-color:#F8E0E0",
   });
   TagMaker("div", newTextBox, {
     style: "width:100%; height:auto; font-size:13px; text-align:center; ",
-    innerText: data + "님이 들어오셨습니다. 하이하이~",
+    innerText: data.user + "님이 들어오셨습니다. 하이하이~",
   });
 });
 
 // 내가 작성된 메세지 생성 이벤트
 chatTextSend.addEventListener("submit", (e) => {
   e.preventDefault();
+
+  console.log(socket.room);
 
   // 내가 입력한 값을 서버로 전달해준다.
   socket.emit("message", textbox.value);
@@ -99,4 +112,8 @@ socket.on("getOut", (data) => {
     style: "width:100%; height:auto; text-align:center; font-size:13px; ",
     innerText: data + "님이 퇴장하셨습니다! 바이바이~",
   });
+});
+
+chatLeave.addEventListener("click", () => {
+  socket.emit(leaveRoom, socket);
 });

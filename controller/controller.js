@@ -31,23 +31,42 @@ app.get("/module/tagMaker.js", (req, res) => {
   res.sendFile("tagMaker.js", { root: path.join(__dirname, "module") });
 });
 
+let onlineUser = [];
+
 // 소켓입장 시
 io.on("connection", (socket) => {
   console.log("socket server is on");
 
-  // 입장한 소켓의 아이디를 전달한다.
-  io.emit("come", socket.id);
+  // 입장한 유저를 온라인유저 배열에 추가.
+  onlineUser.push(socket.id);
+
+  if (onlineUser.length % 2 === 1) {
+    socket.join("one");
+
+    // 입장한 소켓의 아이디를 전달한다.
+    io.to("one").emit("come", { user: socket.id, room: "one" });
+
+    //socket 에 room 추가
+    socket.room = "one";
+  } else {
+    socket.join("two");
+    io.to("two").emit("come", { user: socket.id, room: "two" });
+    socket.room = "two";
+  }
 
   // 전달받은 메세지를 나 제외한 다른 유저에게 전달한다.
   socket.on("message", (data) => {
-    console.log("메세지오낭", data);
+    socket.to(socket.room).emit("anotherMessage", data);
+  });
 
-    socket.broadcast.emit("anotherMessage", data);
+  io.on(leaveRoom, (socket) => {
+    socket.leave(socket.room, () => {});
   });
 
   socket.on("disconnect", () => {
     console.log("byebye");
-    io.emit("getOut", socket.id);
+    io.to(socket.room).emit("getOut", socket.id);
+    onlineUser = onlineUser.filter((user) => user !== socket.id);
   });
 });
 
