@@ -42,14 +42,14 @@ io.on("connection", (socket) => {
   onlineUser.push(socket.id);
 
   if (onlineUser.length % 2 === 1) {
-    socket.join(room[0]);
-
     //socket 에 room 추가
     socket.room = room[0];
   } else {
-    socket.join(room[1]);
     socket.room = room[1];
   }
+
+  // 방에 입장
+  socket.join(socket.room);
 
   // 입장한 소켓의 아이디를 전달한다.
   io.to(socket.room).emit("come", { user: socket.id, room: socket.room });
@@ -59,6 +59,7 @@ io.on("connection", (socket) => {
     socket.to(socket.room).emit("anotherMessage", data);
   });
 
+  // 클라이언트 측 다른 방 가기 버튼 클릭 시 발생하는 이벤트
   socket.on("leaveRoom", () => {
     // 기존 방 떠나기
     socket.leave(socket.room);
@@ -66,12 +67,16 @@ io.on("connection", (socket) => {
     // 잘가라고 인사보내주기
     io.to(socket.room).emit("bye", socket.id);
 
+    // 기존 있던 방을 제외하여 방 필터링
     let otherroom = room.filter((data) => data !== socket.room);
 
+    // 해당 방을 socket.room 에 업뎃
     socket.room = otherroom[0];
 
+    // 새로운 방 입장
     socket.join(socket.room);
 
+    // 새로운 방에 입장한 건에 대한 emit 생성
     io.to(socket.room).emit("otherRoomIn", { user: socket.id, room: socket.room });
   });
 
