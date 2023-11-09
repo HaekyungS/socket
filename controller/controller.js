@@ -59,20 +59,20 @@ io.on("connection", (socket) => {
     socket.to(socket.room).emit("anotherMessage", data);
   });
 
-  io.on("leaveRoom", () => {
-    socket.leave(socket.room, () => {
-      io.to(socket.room).emit("bye", socket.id);
+  socket.on("leaveRoom", () => {
+    // 기존 방 떠나기
+    socket.leave(socket.room);
 
-      otherroom = room.filter((data) => {
-        data !== socket.room;
-      });
+    // 잘가라고 인사보내주기
+    io.to(socket.room).emit("bye", socket.id);
 
-      socket.room = otherroom[0];
+    let otherroom = room.filter((data) => data !== socket.room);
 
-      socket.join(socket.room);
+    socket.room = otherroom[0];
 
-      io.to(room[0]).emit("otherRoomIn", { user: socket.id, room: socket.room });
-    });
+    socket.join(socket.room);
+
+    io.to(socket.room).emit("otherRoomIn", { user: socket.id, room: socket.room });
   });
 
   socket.on("disconnect", () => {

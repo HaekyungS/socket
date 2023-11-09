@@ -129,17 +129,19 @@ socket.on("bye", (data) => {
     style: "width:100%; height:auto; text-align:center; font-size:13px; ",
     innerText: data + "님이 퇴장하셨습니다! 바이바이~",
   });
-});
 
-// 새로운 방 입장
-socket.on("otherRoomIn", () => {
-  chatRoomName.innerText = data.room + "의 room";
+  // 새로운 방 입장
+  socket.on("otherRoomIn", () => {
+    console.log(" 이벤트 실행확인 ");
 
-  const newTextBox = TagMaker("div", chatTextBox, {
-    style: "width:90%; height:auto; display:flex; margin:7px;background-color:#F8E0E0",
-  });
-  TagMaker("div", newTextBox, {
-    style: "width:100%; height:auto; font-size:13px; text-align:center; ",
-    innerText: data.user + "님이 들어오셨습니다. 하이하이~",
+    chatRoomName.innerText = data.room + "의 room";
+
+    const newTextBox = TagMaker("div", chatTextBox, {
+      style: "width:90%; height:auto; display:flex; margin:7px;background-color:#F8E0E0",
+    });
+    TagMaker("div", newTextBox, {
+      style: "width:100%; height:auto; font-size:13px; text-align:center; ",
+      innerText: data.user + "님이 들어오셨습니다. 하이하이~",
+    });
   });
 });
