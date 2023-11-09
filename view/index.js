@@ -76,8 +76,6 @@ socket.on("come", (data) => {
 chatTextSend.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  console.log(socket.room);
-
   // 내가 입력한 값을 서버로 전달해준다.
   socket.emit("message", textbox.value);
 
@@ -115,5 +113,33 @@ socket.on("getOut", (data) => {
 });
 
 chatLeave.addEventListener("click", () => {
-  socket.emit(leaveRoom, socket);
+  // 반복문을 사용하여 채팅 내용 지우기.
+  while (chatTextBox.hasChildNodes()) {
+    chatTextBox.removeChild(chatTextBox.firstChild);
+  }
+  socket.emit("leaveRoom");
+});
+
+// 룸을 나갔을 때
+socket.on("bye", (data) => {
+  const newTextBox = TagMaker("div", chatTextBox, {
+    style: "width:90%; height:auto; display:flex; margin:5px; background-color:#F8E0E0",
+  });
+  TagMaker("div", newTextBox, {
+    style: "width:100%; height:auto; text-align:center; font-size:13px; ",
+    innerText: data + "님이 퇴장하셨습니다! 바이바이~",
+  });
+});
+
+// 새로운 방 입장
+socket.on("otherRoomIn", () => {
+  chatRoomName.innerText = data.room + "의 room";
+
+  const newTextBox = TagMaker("div", chatTextBox, {
+    style: "width:90%; height:auto; display:flex; margin:7px;background-color:#F8E0E0",
+  });
+  TagMaker("div", newTextBox, {
+    style: "width:100%; height:auto; font-size:13px; text-align:center; ",
+    innerText: data.user + "님이 들어오셨습니다. 하이하이~",
+  });
 });
