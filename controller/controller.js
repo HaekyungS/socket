@@ -32,6 +32,7 @@ app.get("/module/tagMaker.js", (req, res) => {
 });
 
 let onlineUser = [];
+let room = ["one", "two"];
 
 // 소켓입장 시
 io.on("connection", (socket) => {
@@ -41,26 +42,37 @@ io.on("connection", (socket) => {
   onlineUser.push(socket.id);
 
   if (onlineUser.length % 2 === 1) {
-    socket.join("one");
-
-    // 입장한 소켓의 아이디를 전달한다.
-    io.to("one").emit("come", { user: socket.id, room: "one" });
+    socket.join(room[0]);
 
     //socket 에 room 추가
-    socket.room = "one";
+    socket.room = room[0];
   } else {
-    socket.join("two");
-    io.to("two").emit("come", { user: socket.id, room: "two" });
-    socket.room = "two";
+    socket.join(room[1]);
+    socket.room = room[1];
   }
+
+  // 입장한 소켓의 아이디를 전달한다.
+  io.to(socket.room).emit("come", { user: socket.id, room: socket.room });
 
   // 전달받은 메세지를 나 제외한 다른 유저에게 전달한다.
   socket.on("message", (data) => {
     socket.to(socket.room).emit("anotherMessage", data);
   });
 
-  io.on(leaveRoom, (socket) => {
-    socket.leave(socket.room, () => {});
+  io.on("leaveRoom", () => {
+    socket.leave(socket.room, () => {
+      io.to(socket.room).emit("bye", socket.id);
+
+      otherroom = room.filter((data) => {
+        data !== socket.room;
+      });
+
+      socket.room = otherroom[0];
+
+      socket.join(socket.room);
+
+      io.to(room[0]).emit("otherRoomIn", { user: socket.id, room: socket.room });
+    });
   });
 
   socket.on("disconnect", () => {
