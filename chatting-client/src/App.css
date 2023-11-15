@@ -1,0 +1,68 @@
+/* 플렉스 열센터 */
+.flexColumnCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 플렉스 센터 */
+.flexCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 메인컨테이너 */
+.chatContainer {
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffcdd2;
+}
+
+/* 채팅박스 */
+.chatbox {
+  width: 50%;
+  height: 60%;
+  background-color: pink;
+}
+
+.chatTop {
+  width: 100%;
+  height: 10%;
+  text-align: center;
+}
+
+/* 다른 방 이동 버튼 */
+.otherRoom {
+  width: 30%;
+  height: 60%;
+  background-color: #f08080;
+  font-size: 15px;
+}
+
+.chatMain {
+  width: 100%;
+  height: 75%;
+  border-top: 0.5px solid lightcoral;
+  border-bottom: 0.5px solid lightcoral;
+}
+
+.chatMessage {
+  width: 100%;
+  height: 15%;
+}
+
+/* 입력구간 */
+.chatInput {
+  width: 70%;
+  height: 60%;
+  background-color: #ffcdd2;
+  border: none;
+}
+
+.chatSummitButton {
+  width: 20%;
+  height: 60%;
+  border-radius: 25%;
+}
