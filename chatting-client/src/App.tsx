@@ -1,18 +1,24 @@
 import React, { useState } from "react";
 import "./App.css";
 
-function App() {
+export const App = () => {
   // 입력될 채팅
   const [chatText, setChatText] = useState("");
+  const [chatList, setChatList] = useState<string[]>([]);
 
   // text 입력받으면 추가시킬 함수
   const chatInput = (text: string) => {
-    return <div>{text}</div>;
+    return <li>{text}</li>;
   };
 
   const chatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChatText(event.target.value);
     console.log(chatText);
+  };
+
+  const chatAdd = () => {
+    setChatList([...chatList, chatText]);
+    setChatText("");
   };
 
   return (
@@ -27,10 +33,10 @@ function App() {
         </div>
 
         {/* 메인채팅 */}
-        <div className="chatMain">
+        <ol className="chatMain">
           {/* 아래 전송 누르면 여기 생겨야함 */}
-          {}
-        </div>
+          {chatList.map(chatInput)}
+        </ol>
 
         {/* 하단입력부 */}
         <div className="chatMessage flexCenter">
@@ -41,11 +47,9 @@ function App() {
             value={chatText}
             onChange={chatChange}
           />
-          <input type="submit" value="전송" className="chatSummitButton" />
+          <input type="submit" value="전송" className="chatSummitButton" onClick={chatAdd} />
         </div>
       </div>
     </div>
   );
-}
-
-export default App;
+};
